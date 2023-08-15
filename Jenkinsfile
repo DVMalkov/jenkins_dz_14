@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        NAME = "${env.MY_VAR_NAME}"
+    }
     stages {
         stage('1-EXECUTION') {
             steps {
@@ -7,7 +10,7 @@ pipeline {
                 sh 'pip install -r requirements.txt'
                 sh 'chmod u+x hello.py'
                 sh 'touch result.txt'
-                sh 'python3 hello.py -n Dmitry > result.txt'
+                sh 'python3 hello.py -n ${NAME} > result.txt'
             }
         }
         stage('2-ARCHIVEARTIFACT') {
