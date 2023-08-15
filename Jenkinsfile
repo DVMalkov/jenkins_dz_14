@@ -1,37 +1,18 @@
 pipeline {
     agent any
-
     stages {
-        stage('Check for changes') {
+        stage('1-EXECUTION') {
             steps {
-                script {
-                    def changes = sh(returnStdout: true, script: 'git diff --name-only HEAD^ HEAD')
-                    if (changes.trim() != '') {
-                        stage('Install dependencies') {
-                            steps {
-                                sh 'pip install -r requirements.txt'
-                            }
-                        }
-                        
-                        stage('Run hello.py') {
-                            steps {
-                                sh 'python hello.py --name=${params.STUDENT_NAME}'
-                            }
-                        }
-                        
-                        stage('Save output to result.txt') {
-                            steps {
-                                sh 'python hello.py --name=${params.STUDENT_NAME} > result.txt'
-                            }
-                        }
-                        
-                        stage('Archive result.txt') {
-                            steps {
-                                archiveArtifacts 'result.txt'
-                            }
-                        }
-                    }
-                }
+                sh 'apt install -y python3-pip'
+                sh 'pip install -r requirements.txt'
+                sh 'chmod u+x hello.py'
+                sh 'touch result.txt'
+                sh 'python3 hello.py -n Dmitry > result.txt'
+            }
+        }
+        stage('2-ARCHIVEARTIFACT') {
+            steps {
+                archiveArtifacts artifacts: 'result.txt'
             }
         }
     }
